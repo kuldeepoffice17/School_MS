@@ -76,6 +76,9 @@
                                                class="btn btn-primary" title="Edit">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
+                                            <a href="{{ route('admin.classes.assign-subject', $class) }}" class="btn btn-warning btn-sm" title="Assign Subjects">
+                                                <i class="bi bi-journal-bookmark"></i>
+                                            </a>
                                             <button type="button" 
                                                     class="btn btn-danger delete-class" 
                                                     data-id="{{ $class->id }}"

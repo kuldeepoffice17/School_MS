@@ -22,4 +22,17 @@ class Exam extends Model
     {
         return $this->belongsTo(AcademicYear::class);
     }
+
+    // Get exam status
+    public function getExamStatusAttribute()
+    {
+        $today = now();
+        if ($today < $this->start_date) {
+            return 'upcoming';
+        } elseif ($today >= $this->start_date && $today <= $this->end_date) {
+            return 'ongoing';
+        } else {
+            return 'completed';
+        }
+    }
 }

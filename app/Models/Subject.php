@@ -13,9 +13,18 @@ class Subject extends Model
         'name', 'code', 'type', 'theory_marks', 'practical_marks'
     ];
 
+    // public function classes()
+    // {
+    //     return $this->belongsToMany(Classes::class, 'class_subjects');
+    // }
+
+    // public function teachers()
+    // {
+    //     return $this->belongsToMany(Teacher::class, 'teacher_subjects');
+    // }
     public function classes()
     {
-        return $this->belongsToMany(Classes::class, 'class_subjects');
+        return $this->belongsToMany(Classes::class, 'class_subjects', 'subject_id', 'class_id');
     }
 
     public function teachers()

@@ -23,13 +23,23 @@ class Classes extends Model
         return $this->hasMany(Student::class, 'class_id');
     }
 
-    public function teachers()
+    // public function teachers()
+    // {
+    //     return $this->belongsToMany(Teacher::class, 'class_teacher');
+    // }
+
+    // public function subjects()
+    // {
+    //     return $this->belongsToMany(Subject::class, 'class_subjects');
+    // }
+      public function teachers()
     {
-        return $this->belongsToMany(Teacher::class, 'class_teacher');
+        return $this->belongsToMany(Teacher::class, 'class_teacher', 'class_id', 'teacher_id');
     }
 
-    public function subjects()
+    // For class_subjects pivot table
+     public function subjects()
     {
-        return $this->belongsToMany(Subject::class, 'class_subjects');
+        return $this->belongsToMany(Subject::class, 'class_subjects', 'class_id', 'subject_id');
     }
 }

@@ -3,63 +3,112 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Subject;
+use App\Models\Classes;
+use App\Models\Teacher;
 use Illuminate\Http\Request;
 
 class SubjectController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $query = Subject::query();
+        
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('code', 'like', "%{$search}%");
+            });
+        }
+        
+        if ($request->has('type') && $request->type != '') {
+            $query->where('type', $request->type);
+        }
+        
+        $subjects = $query->latest()->paginate(10);
+        return view('admin.subjects.index', compact('subjects'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $classes = Classes::all();
+        $teachers = Teacher::where('status', 'active')->get();
+        return view('admin.subjects.create', compact('classes', 'teachers'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:100',
+            'code' => 'required|string|max:20|unique:subjects,code',
+            'type' => 'required|in:theory,practical,both',
+            'theory_marks' => 'required|integer|min:0|max:500',
+            'practical_marks' => 'required|integer|min:0|max:200',
+            'classes' => 'array',
+            'teachers' => 'array'
+        ]);
+
+        $subject = Subject::create($request->except(['classes', 'teachers']));
+        
+        if ($request->has('classes')) {
+            $subject->classes()->sync($request->classes);
+        }
+        
+        if ($request->has('teachers')) {
+            $subject->teachers()->sync($request->teachers);
+        }
+        
+        return redirect()->route('admin.subjects.index')
+            ->with('success', 'Subject created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Subject $subject)
     {
-        //
+        $subject->load(['classes', 'teachers']);
+        return view('admin.subjects.show', compact('subject'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit(Subject $subject)
     {
-        //
+        $classes = Classes::all();
+        $teachers = Teacher::where('status', 'active')->get();
+        return view('admin.subjects.edit', compact('subject', 'classes', 'teachers'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Subject $subject)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:100',
+            'code' => 'required|string|max:20|unique:subjects,code,' . $subject->id,
+            'type' => 'required|in:theory,practical,both',
+            'theory_marks' => 'required|integer|min:0|max:500',
+            'practical_marks' => 'required|integer|min:0|max:200',
+            'classes' => 'array',
+            'teachers' => 'array'
+        ]);
+
+        $subject->update($request->except(['classes', 'teachers']));
+        
+        if ($request->has('classes')) {
+            $subject->classes()->sync($request->classes);
+        }
+        
+        if ($request->has('teachers')) {
+            $subject->teachers()->sync($request->teachers);
+        }
+        
+        return redirect()->route('admin.subjects.index')
+            ->with('success', 'Subject updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Subject $subject)
     {
-        //
+        $subject->classes()->detach();
+        $subject->teachers()->detach();
+        $subject->delete();
+        
+        return redirect()->route('admin.subjects.index')
+            ->with('success', 'Subject deleted successfully.');
     }
 }

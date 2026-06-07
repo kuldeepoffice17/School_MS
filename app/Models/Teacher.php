@@ -20,10 +20,15 @@ class Teacher extends Model
         'joining_date' => 'date',
     ];
 
-    public function classes()
+    // public function classes()
+    // {
+    //     return $this->belongsToMany(Classes::class, 'class_teacher');
+    // }
+      public function classes()
     {
-        return $this->belongsToMany(Classes::class, 'class_teacher');
+        return $this->belongsToMany(Classes::class, 'class_teacher', 'teacher_id', 'class_id');
     }
+
 
     public function subjects()
     {

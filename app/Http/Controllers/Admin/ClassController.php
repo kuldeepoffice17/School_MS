@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Classes;
+use App\Models\Subject;
 use App\Models\Section;
 use Illuminate\Http\Request;
 
@@ -68,5 +69,23 @@ class ClassController extends Controller
     {
         $class->delete();
         return redirect()->route('admin.classes.index')->with('success', 'Class deleted successfully.');
+    }
+    public function assignSubject(Classes $class)
+    {
+        $subjects = Subject::all();
+        return view('admin.classes.assign-subject', compact('class', 'subjects'));
+    }
+
+    public function assignSubjectStore(Request $request, Classes $class)
+    {
+        $request->validate([
+            'subjects' => 'required|array',
+            'subjects.*' => 'exists:subjects,id'
+        ]);
+        
+        $class->subjects()->sync($request->subjects);
+        
+        return redirect()->route('admin.classes.index')
+            ->with('success', 'Subjects assigned successfully.');
     }
 }

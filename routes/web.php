@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\ClassController;
 use App\Http\Controllers\Admin\SubjectController;
 use App\Http\Controllers\Admin\ExamController;
 use App\Http\Controllers\Admin\AttendanceController;
+use App\Http\Controllers\Admin\AcademicYearController;
 use App\Http\Controllers\Admin\FeeController;
 use App\Http\Controllers\HomeController;
 
@@ -33,22 +34,31 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     
     // Teacher Management
     Route::resource('teachers', TeacherController::class);
-    
+    Route::get('teachers/{teacher}/assign-class', [TeacherController::class, 'assignClass'])->name('teachers.assign-class');
+   Route::post('teachers/{teacher}/assign-class', [TeacherController::class, 'assignClassStore'])->name('teachers.assign-class-store');
     // Class Management
     Route::resource('classes', ClassController::class);
     Route::get('class-sections/{classId}', [ClassController::class, 'getSections'])->name('class.sections');
-    
+    Route::get('classes/{class}/assign-subject', [ClassController::class, 'assignSubject'])->name('classes.assign-subject');
+    Route::post('classes/{class}/assign-subject', [ClassController::class, 'assignSubjectStore'])->name('classes.assign-subject-store');
     // Subject Management
     Route::resource('subjects', SubjectController::class);
     
     // Exam Management
     Route::resource('exams', ExamController::class);
+    Route::get('exams/{exam}/routine', [ExamController::class, 'routine'])->name('exams.routine');
+    Route::post('exams/{exam}/routine', [ExamController::class, 'routineStore'])->name('exams.routine-store');
+    Route::get('exams/{exam}/marks-entry', [ExamController::class, 'marksEntry'])->name('exams.marks-entry');
+    Route::post('exams/{exam}/marks', [ExamController::class, 'marksStore'])->name('exams.marks-store');
+    Route::get('get-students', [ExamController::class, 'getStudents'])->name('exams.get-students');
     
     // Attendance Management
     Route::get('attendance', [AttendanceController::class, 'index'])->name('attendance.index');
     Route::post('attendance/mark', [AttendanceController::class, 'markAttendance'])->name('attendance.mark');
     Route::get('attendance/report', [AttendanceController::class, 'report'])->name('attendance.report');
-    
+        // Academic Year Management
+    Route::resource('academic-years', AcademicYearController::class);
+    Route::post('academic-years/{academicYear}/set-current', [AcademicYearController::class, 'setCurrent'])->name('academic-years.set-current');
     // Fee Management
     Route::resource('fees', FeeController::class);
     Route::post('fees/{fee}/payment', [FeeController::class, 'addPayment'])->name('fees.payment');
