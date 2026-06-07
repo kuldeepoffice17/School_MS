@@ -17,7 +17,8 @@
     <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <!-- SweetAlert2 -->
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
-    
+    <link rel="stylesheet"
+        href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.bootstrap5.min.css">
     <style>
         :root {
             --primary-color: #4e73df;
@@ -44,17 +45,21 @@
         }
         
         /* Sidebar Styles */
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: var(--sidebar-width);
-            height: 100vh;
-            background: linear-gradient(180deg, #4e73df 0%, #224abe 100%);
-            color: white;
-            transition: all 0.3s ease;
-            z-index: 1000;
-            overflow-y: auto;
+        @media (max-width: 768px) {
+
+            .sidebar {
+                left: -250px;
+                width: 250px;
+            }
+
+            .sidebar.show {
+                left: 0;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
         }
         
         .sidebar.closed {
@@ -234,6 +239,18 @@
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
         }
         
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(180deg, #4e73df 0%, #224abe 100%);
+            color: white;
+            transition: all 0.3s ease;
+            z-index: 1050;
+            overflow-y: auto;
+        }
         /* Responsive */
         @media (max-width: 768px) {
             .sidebar {
@@ -263,13 +280,65 @@
             background: var(--primary-color);
             border-radius: 3px;
         }
+        #sidebarOverlay{
+            position: fixed;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+            background:rgba(0,0,0,0.5);
+            z-index:1040;
+            display:none;
+        }
+
+        #sidebarOverlay.show{
+            display:block;
+        }
+        @media (max-width:768px){
+
+            .search-bar{
+                display:none;
+            }
+
+            .header{
+                padding:0 15px;
+            }
+
+            .content{
+                padding:15px;
+            }
+
+            .user-info{
+                display:none;
+            }
+        }
+        .stat-card{
+            height:100%;
+        }
+
+        @media (max-width:768px){
+
+            .stat-card{
+                margin-bottom:15px;
+            }
+
+            .stat-card h3{
+                font-size:22px;
+            }
+
+            .stat-card i{
+                font-size:28px !important;
+            }
+        }
     </style>
     
     @stack('styles')
 </head>
 <body>
     <!-- Sidebar -->
+     <div id="sidebarOverlay"></div>
     <div class="sidebar" id="sidebar">
+       
         <div class="sidebar-header">
             <h4><i class="bi bi-mortarboard"></i> SchoolMS</h4>
             <p>School Management System</p>
@@ -408,10 +477,20 @@
     
     <script>
         // Toggle Sidebar
-        document.getElementById('toggleSidebar').addEventListener('click', function() {
-            document.getElementById('sidebar').classList.toggle('closed');
-            document.getElementById('mainContent').classList.toggle('expanded');
-        });
+        // document.getElementById('toggleSidebar').addEventListener('click', function() {
+        //     document.getElementById('sidebar').classList.toggle('closed');
+        //     document.getElementById('mainContent').classList.toggle('expanded');
+        // });
+        // document.getElementById('toggleSidebar').addEventListener('click', function() {
+
+        //     if(window.innerWidth <= 768){
+        //         document.getElementById('sidebar').classList.toggle('show');
+        //     }else{
+        //         document.getElementById('sidebar').classList.toggle('closed');
+        //         document.getElementById('mainContent').classList.toggle('expanded');
+        //     }
+
+        // });
         
         // Initialize DataTables
         $(document).ready(function() {
@@ -448,8 +527,34 @@
         if (window.innerWidth <= 768) {
             document.getElementById('sidebar').classList.add('closed');
         }
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+
+        document.getElementById('toggleSidebar').addEventListener('click', function () {
+
+            if(window.innerWidth <= 768){
+
+                sidebar.classList.toggle('show');
+                overlay.classList.toggle('show');
+
+            }else{
+
+                sidebar.classList.toggle('closed');
+                document.getElementById('mainContent').classList.toggle('expanded');
+            }
+        });
+
+        overlay.addEventListener('click', function(){
+
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
+
+        });
+        
     </script>
-    
+<script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
+
+        <script src="https://cdn.datatables.net/responsive/2.4.1/js/responsive.bootstrap5.min.js"></script>
     @stack('scripts')
 </body>
 </html>
