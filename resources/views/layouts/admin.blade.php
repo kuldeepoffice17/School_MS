@@ -400,9 +400,13 @@
             @endrole
             
             <div class="menu-category">SYSTEM</div>
-            <a href="#" class="menu-item">
+            <a href="{{ route('admin.settings.general') }}" class="menu-item">
                 <i class="bi bi-gear"></i>
-                <span>Settings</span>
+                <span>General Settings</span>
+            </a>
+            <a href="{{ route('admin.grades.index') }}" class="menu-item">
+                <i class="bi bi-star"></i>
+                <span>Grading System</span>
             </a>
             
             <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="menu-item">

@@ -19,4 +19,22 @@ class HomeController extends Controller
             return view('home');
         }
     }
+
+    public function indexhome()
+    {
+        // Ye data dynamic bana sakte ho database se
+        $notices = [
+            'School will remain closed on 26th Jan',
+            'PTM on 30th Jan 2026',
+            'Annual Exam starts from 10th March'
+        ];
+
+        $upcomingEvents = [
+            ['name' => 'Sports Day', 'date' => '15 Feb 2026'],
+            ['name' => 'Science Exhibition', 'date' => '20 Feb 2026'],
+        ];
+
+        return view('indexhome', compact('notices', 'upcomingEvents'));
+    }
+
 }
