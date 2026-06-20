@@ -344,7 +344,7 @@
             <p>School Management System</p>
         </div>
         
-        <div class="sidebar-menu">
+        {{-- <div class="sidebar-menu">
             <div class="menu-category">MAIN</div>
             <a href="{{ route('admin.dashboard') }}" class="menu-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                 <i class="bi bi-speedometer2"></i>
@@ -416,7 +416,132 @@
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                 @csrf
             </form>
-        </div>
+        </div> --}}
+        <div class="sidebar-menu">
+    <div class="menu-category">MAIN</div>
+    <a href="{{ route('admin.dashboard') }}" class="menu-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+        <i class="bi bi-speedometer2"></i>
+        <span>Dashboard</span>
+    </a>
+    
+    <!-- Show for Admin Only -->
+    @if(Auth::user()->role == 'admin')
+    <div class="menu-category">MANAGEMENT</div>
+    
+    <!-- User Verification - Important -->
+    <a href="{{ route('admin.users.verification') }}" 
+        class="menu-item {{ request()->routeIs('admin.users.verification') ? 'active' : '' }}">
+            <i class="bi bi-person-check"></i>
+            <span>User Verification</span>
+            @php 
+                $pendingCount = \App\Models\User::where('is_verified', false)->where('role', '!=', 'admin')->count(); 
+            @endphp
+            @if($pendingCount > 0)
+                <span class="badge bg-danger ms-auto">{{ $pendingCount }}</span>
+            @endif
+    </a>
+    
+    <a href="{{ route('admin.students.index') }}" class="menu-item {{ request()->routeIs('admin.students.*') ? 'active' : '' }}">
+        <i class="bi bi-people"></i>
+        <span>Students</span>
+    </a>
+    
+    <a href="{{ route('admin.teachers.index') }}" class="menu-item {{ request()->routeIs('admin.teachers.*') ? 'active' : '' }}">
+        <i class="bi bi-person-badge"></i>
+        <span>Teachers</span>
+    </a>
+    
+    <a href="{{ route('admin.classes.index') }}" class="menu-item {{ request()->routeIs('admin.classes.*') ? 'active' : '' }}">
+        <i class="bi bi-building"></i>
+        <span>Classes</span>
+    </a>
+    
+    <a href="{{ route('admin.subjects.index') }}" class="menu-item {{ request()->routeIs('admin.subjects.*') ? 'active' : '' }}">
+        <i class="bi bi-book"></i>
+        <span>Subjects</span>
+    </a>
+    
+    <div class="menu-category">ACADEMIC</div>
+    <a href="{{ route('admin.academic-years.index') }}" class="menu-item">
+        <i class="bi bi-calendar"></i>
+        <span>Academic Years</span>
+    </a>
+    <a href="{{ route('admin.exams.index') }}" class="menu-item {{ request()->routeIs('admin.exams.*') ? 'active' : '' }}">
+        <i class="bi bi-file-text"></i>
+        <span>Exams</span>
+    </a>
+    
+    <a href="{{ route('admin.attendance.index') }}" class="menu-item {{ request()->routeIs('admin.attendance.*') ? 'active' : '' }}">
+        <i class="bi bi-calendar-check"></i>
+        <span>Attendance</span>
+    </a>
+    
+    <div class="menu-category">FINANCE</div>
+    <a href="{{ route('admin.fees.index') }}" class="menu-item {{ request()->routeIs('admin.fees.*') ? 'active' : '' }}">
+        <i class="bi bi-currency-dollar"></i>
+        <span>Fees Collection</span>
+    </a>
+    @endif
+    
+    <!-- Show for Teachers -->
+    @if(Auth::user()->role == 'teacher')
+    <div class="menu-category">ACADEMIC</div>
+    <a href="{{ route('admin.exams.index') }}" class="menu-item">
+        <i class="bi bi-file-text"></i>
+        <span>Exams</span>
+    </a>
+    <a href="{{ route('admin.attendance.index') }}" class="menu-item">
+        <i class="bi bi-calendar-check"></i>
+        <span>Attendance</span>
+    </a>
+    @endif
+    
+    <!-- Show for Accountants -->
+    @if(Auth::user()->role == 'accountant')
+    <div class="menu-category">FINANCE</div>
+    <a href="{{ route('admin.fees.index') }}" class="menu-item">
+        <i class="bi bi-currency-dollar"></i>
+        <span>Fees Collection</span>
+    </a>
+    @endif
+    
+    <!-- Show for Students & Parents (Limited Access) -->
+    @if(Auth::user()->role == 'student' || Auth::user()->role == 'parent')
+    <div class="menu-category">MY ACCOUNT</div>
+    <a href="#" class="menu-item">
+        <i class="bi bi-person"></i>
+        <span>My Profile</span>
+    </a>
+    <a href="#" class="menu-item">
+        <i class="bi bi-journal"></i>
+        <span>My Results</span>
+    </a>
+    <a href="#" class="menu-item">
+        <i class="bi bi-calendar-check"></i>
+        <span>My Attendance</span>
+    </a>
+    @endif
+    
+    <div class="menu-category">SYSTEM</div>
+    @if(Auth::user()->role == 'admin')
+    <a href="{{ route('admin.settings.general') }}" class="menu-item">
+        <i class="bi bi-gear"></i>
+        <span>General Settings</span>
+    </a>
+    <a href="{{ route('admin.grades.index') }}" class="menu-item">
+        <i class="bi bi-star"></i>
+        <span>Grading System</span>
+    </a>
+    @endif
+    
+    <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="menu-item">
+        <i class="bi bi-box-arrow-right"></i>
+        <span>Logout</span>
+    </a>
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+        @csrf
+    </form>
+</div>
     </div>
     
     <!-- Main Content -->

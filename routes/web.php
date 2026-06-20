@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\TeacherController;
 use App\Http\Controllers\Admin\ClassController;
 use App\Http\Controllers\Admin\SubjectController;
 use App\Http\Controllers\Admin\ExamController;
+use App\Http\Controllers\Admin\UserVerificationController;
 use App\Http\Controllers\Admin\AttendanceController;
 use App\Http\Controllers\Admin\AcademicYearController;
 use App\Http\Controllers\Admin\FeeController;
@@ -74,6 +75,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::put('settings/general', [SettingController::class, 'updateGeneral'])->name('settings.update-general');
     Route::put('settings/logo', [SettingController::class, 'updateLogo'])->name('settings.update-logo');
 
+    // User Verification Routes (Admin Only)
+Route::prefix('users')->name('users.')->group(function () {
+    Route::get('verification', [UserVerificationController::class, 'index'])->name('verification');
+    Route::post('{user}/verify', [UserVerificationController::class, 'verify'])->name('verify');
+    Route::post('{user}/reject', [UserVerificationController::class, 'reject'])->name('reject');
+    Route::delete('{user}/delete', [UserVerificationController::class, 'delete'])->name('delete');
+});
     // Grade Management Routes
     Route::resource('grades', GradeController::class);
 });

@@ -26,7 +26,7 @@
         
         .register-container {
             width: 100%;
-            max-width: 500px;
+            max-width: 520px;
         }
         
         .register-card {
@@ -64,6 +64,11 @@
             color: #333;
         }
         
+        .register-header p {
+            color: #666;
+            font-size: 14px;
+        }
+        
         .form-group {
             margin-bottom: 20px;
         }
@@ -73,6 +78,11 @@
             margin-bottom: 8px;
             font-weight: 500;
             color: #333;
+            font-size: 14px;
+        }
+        
+        .form-group label .required {
+            color: #dc3545;
         }
         
         .input-group-custom {
@@ -85,26 +95,44 @@
             top: 50%;
             transform: translateY(-50%);
             color: #999;
+            z-index: 1;
         }
         
-        .input-group-custom input {
+        .input-group-custom input,
+        .input-group-custom select {
             width: 100%;
             padding: 12px 15px 12px 45px;
             border: 2px solid #e0e0e0;
             border-radius: 10px;
             font-size: 14px;
             transition: all 0.3s;
+            background: white;
         }
         
-        .input-group-custom input:focus {
+        .input-group-custom select {
+            appearance: none;
+            cursor: pointer;
+        }
+        
+        .input-group-custom input:focus,
+        .input-group-custom select:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
         
+        .input-group-custom .role-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            pointer-events: none;
+        }
+        
         .btn-register {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
             border-radius: 10px;
@@ -112,6 +140,7 @@
             font-weight: 600;
             font-size: 16px;
             transition: all 0.3s;
+            cursor: pointer;
         }
         
         .btn-register:hover {
@@ -129,11 +158,33 @@
         .register-footer a {
             color: #667eea;
             text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .register-footer a:hover {
+            text-decoration: underline;
         }
         
         .alert {
             border-radius: 10px;
             margin-bottom: 20px;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        
+        .role-info {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+            display: block;
+        }
+        
+        .role-info i {
+            color: #667eea;
         }
     </style>
 </head>
@@ -145,8 +196,18 @@
                     <i class="bi bi-person-plus"></i>
                 </div>
                 <h3>Create Account</h3>
-                <p>Join our School Management System</p>
+                <p>Register as Student, Teacher, Parent or Accountant</p>
+                <div class="alert alert-info mt-3" style="font-size: 13px;">
+                    <i class="bi bi-info-circle"></i> 
+                    After registration, admin will verify your account. You'll receive access after verification.
+                </div>
             </div>
+            
+            @if(session('success'))
+                <div class="alert alert-success">
+                    <i class="bi bi-check-circle"></i> {{ session('success') }}
+                </div>
+            @endif
             
             @if($errors->any())
                 <div class="alert alert-danger">
@@ -160,8 +221,9 @@
             
             <form method="POST" action="{{ route('register') }}">
                 @csrf
+                
                 <div class="form-group">
-                    <label>Full Name</label>
+                    <label>Full Name <span class="required">*</span></label>
                     <div class="input-group-custom">
                         <i class="bi bi-person"></i>
                         <input type="text" name="name" value="{{ old('name') }}" required autofocus>
@@ -169,7 +231,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>Email Address</label>
+                    <label>Email Address <span class="required">*</span></label>
                     <div class="input-group-custom">
                         <i class="bi bi-envelope"></i>
                         <input type="email" name="email" value="{{ old('email') }}" required>
@@ -177,7 +239,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>Phone Number</label>
+                    <label>Phone Number <span class="required">*</span></label>
                     <div class="input-group-custom">
                         <i class="bi bi-telephone"></i>
                         <input type="text" name="phone" value="{{ old('phone') }}" required>
@@ -185,7 +247,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>Address</label>
+                    <label>Address <span class="required">*</span></label>
                     <div class="input-group-custom">
                         <i class="bi bi-geo-alt"></i>
                         <input type="text" name="address" value="{{ old('address') }}" required>
@@ -193,7 +255,36 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>Password</label>
+                    <label>Register As <span class="required">*</span></label>
+                    <div class="input-group-custom">
+                        <i class="bi bi-person-badge"></i>
+                        <select name="role" required>
+                            <option value="">Select Role</option>
+                            <option value="student" {{ old('role') == 'student' ? 'selected' : '' }}>Student</option>
+                            <option value="teacher" {{ old('role') == 'teacher' ? 'selected' : '' }}>Teacher</option>
+                            <option value="parent" {{ old('role') == 'parent' ? 'selected' : '' }}>Parent</option>
+                            <option value="accountant" {{ old('role') == 'accountant' ? 'selected' : '' }}>Accountant</option>
+                        </select>
+                        <i class="bi bi-chevron-down role-icon"></i>
+                    </div>
+                    <small class="role-info">
+                        <i class="bi bi-info-circle"></i> 
+                        @if(old('role') == 'student')
+                            I am a student who wants to access academic records
+                        @elseif(old('role') == 'teacher')
+                            I am a teacher who wants to manage classes and exams
+                        @elseif(old('role') == 'parent')
+                            I am a parent who wants to track my child's progress
+                        @elseif(old('role') == 'accountant')
+                            I am an accountant who wants to manage fee collections
+                        @else
+                            Select a role to see description
+                        @endif
+                    </small>
+                </div>
+                
+                <div class="form-group">
+                    <label>Password <span class="required">*</span></label>
                     <div class="input-group-custom">
                         <i class="bi bi-lock"></i>
                         <input type="password" name="password" required>
@@ -201,14 +292,14 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>Confirm Password</label>
+                    <label>Confirm Password <span class="required">*</span></label>
                     <div class="input-group-custom">
                         <i class="bi bi-lock"></i>
                         <input type="password" name="password_confirmation" required>
                     </div>
                 </div>
                 
-                <button type="submit" class="btn btn-register">
+                <button type="submit" class="btn-register">
                     <i class="bi bi-person-plus"></i> Register
                 </button>
             </form>
@@ -218,5 +309,22 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Update role description when selection changes
+        document.querySelector('select[name="role"]').addEventListener('change', function() {
+            const roleInfo = document.querySelector('.role-info');
+            const role = this.value;
+            
+            const descriptions = {
+                'student': '📚 I am a student who wants to access academic records',
+                'teacher': '👨‍🏫 I am a teacher who wants to manage classes and exams',
+                'parent': '👨‍👩‍👦 I am a parent who wants to track my child\'s progress',
+                'accountant': '💰 I am an accountant who wants to manage fee collections'
+            };
+            
+            roleInfo.innerHTML = '<i class="bi bi-info-circle"></i> ' + (descriptions[role] || 'Select a role to see description');
+        });
+    </script>
 </body>
 </html>
