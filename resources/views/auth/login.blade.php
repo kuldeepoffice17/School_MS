@@ -21,6 +21,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 20px;
         }
         
         .login-container {
@@ -57,16 +58,19 @@
             font-size: 60px;
             color: #667eea;
             margin-bottom: 15px;
+            display: block;
         }
         
         .login-header h3 {
             font-weight: 700;
             color: #333;
+            margin-bottom: 8px;
         }
         
         .login-header p {
             color: #666;
             font-size: 14px;
+            margin: 0;
         }
         
         .form-group {
@@ -78,27 +82,40 @@
             margin-bottom: 8px;
             font-weight: 500;
             color: #333;
+            font-size: 14px;
         }
         
         .input-group-custom {
             position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
         }
         
-        .input-group-custom i {
+        .input-group-custom i:first-child {
             position: absolute;
             left: 15px;
             top: 50%;
             transform: translateY(-50%);
             color: #999;
+            z-index: 2;
+            pointer-events: none;
+            font-size: 18px;
         }
         
         .input-group-custom input {
             width: 100%;
-            padding: 12px 15px 12px 45px;
+            padding: 12px 50px 12px 45px;
             border: 2px solid #e0e0e0;
             border-radius: 10px;
             font-size: 14px;
             transition: all 0.3s;
+            background: white;
+            color: #333;
+            height: 50px;
+            outline: none;
+            position: relative;
+            z-index: 1;
         }
         
         .input-group-custom input:focus {
@@ -107,18 +124,72 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
         
+        .input-group-custom input::placeholder {
+            color: #aaa;
+        }
+        
+        .input-group-custom input:hover {
+            border-color: #667eea;
+        }
+        
         .password-toggle {
             position: absolute;
-            right: 15px;
+            right: 12px;
             top: 50%;
             transform: translateY(-50%);
             cursor: pointer;
             color: #999;
+            z-index: 3;
+            font-size: 18px;
+            padding: 8px;
+            transition: color 0.3s;
+            background: transparent;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+        }
+        
+        .password-toggle:hover {
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+        
+        .password-toggle:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+        
+        .password-toggle i {
+            pointer-events: none;
+            font-size: 20px;
+            line-height: 1;
+        }
+        
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-check-input {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            margin-top: 0;
+        }
+        
+        .form-check-label {
+            cursor: pointer;
+            font-size: 14px;
+            color: #555;
         }
         
         .btn-login {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
             border-radius: 10px;
@@ -126,11 +197,26 @@
             font-weight: 600;
             font-size: 16px;
             transition: all 0.3s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            height: 50px;
         }
         
         .btn-login:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #5a6fd6 0%, #6a3f8f 100%);
+        }
+        
+        .btn-login:active {
+            transform: translateY(0);
+        }
+        
+        .btn-login i {
+            font-size: 18px;
         }
         
         .login-footer {
@@ -143,11 +229,46 @@
         .login-footer a {
             color: #667eea;
             text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+        
+        .login-footer a:hover {
+            color: #5a6fd6;
+            text-decoration: underline;
         }
         
         .alert {
             border-radius: 10px;
             margin-bottom: 20px;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .alert i {
+            font-size: 18px;
+        }
+        
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 25px 20px;
+            }
+            
+            .login-header .icon {
+                font-size: 45px;
+            }
+            
+            .login-header h3 {
+                font-size: 22px;
+            }
+        }
+        
+        .input-group-custom input:focus-visible {
+            outline: 2px solid #667eea;
+            outline-offset: -2px;
         }
     </style>
 </head>
@@ -155,9 +276,9 @@
     <div class="login-container">
         <div class="login-card">
             <div class="login-header">
-                <div class="icon">
+                <span class="icon">
                     <i class="bi bi-mortarboard"></i>
-                </div>
+                </span>
                 <h3>Welcome Back!</h3>
                 <p>Sign in to access your dashboard</p>
             </div>
@@ -165,26 +286,44 @@
             @if($errors->any())
                 <div class="alert alert-danger">
                     <i class="bi bi-exclamation-triangle"></i>
-                    {{ $errors->first() }}
+                    <span>{{ $errors->first() }}</span>
                 </div>
             @endif
             
             <form method="POST" action="{{ route('login') }}">
                 @csrf
                 <div class="form-group">
-                    <label>Email Address</label>
+                    <label for="email">Email Address</label>
                     <div class="input-group-custom">
                         <i class="bi bi-envelope"></i>
-                        <input type="email" name="email" value="{{ old('email') }}" required autofocus>
+                        <input 
+                            type="email" 
+                            name="email" 
+                            id="email"
+                            value="{{ old('email') }}" 
+                            required 
+                            autofocus
+                            placeholder="Enter your email"
+                            autocomplete="email"
+                        >
                     </div>
                 </div>
                 
                 <div class="form-group">
-                    <label>Password</label>
+                    <label for="password">Password</label>
                     <div class="input-group-custom">
                         <i class="bi bi-lock"></i>
-                        <input type="password" name="password" id="password" required>
-                        <i class="bi bi-eye password-toggle" id="togglePassword"></i>
+                        <input 
+                            type="password" 
+                            name="password" 
+                            id="password" 
+                            required
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                        >
+                        <button type="button" class="password-toggle" id="togglePassword" aria-label="Toggle password visibility">
+                            <i class="bi bi-eye" id="eyeIcon"></i>
+                        </button>
                     </div>
                 </div>
                 
@@ -197,8 +336,9 @@
                     </div>
                 </div>
                 
-                <button type="submit" class="btn btn-login">
-                    <i class="bi bi-box-arrow-in-right"></i> Sign In
+                <button type="submit" class="btn-login">
+                    <i class="bi bi-box-arrow-in-right"></i> 
+                    Sign In
                 </button>
             </form>
             
@@ -209,13 +349,25 @@
     </div>
     
     <script>
-        // Toggle password visibility
-        document.getElementById('togglePassword').addEventListener('click', function() {
+        document.addEventListener('DOMContentLoaded', function() {
+            const togglePassword = document.getElementById('togglePassword');
             const password = document.getElementById('password');
-            const type = password.type === 'password' ? 'text' : 'password';
-            password.type = type;
-            this.classList.toggle('bi-eye');
-            this.classList.toggle('bi-eye-slash');
+            const eyeIcon = document.getElementById('eyeIcon');
+            
+            if (togglePassword && password) {
+                togglePassword.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const type = password.type === 'password' ? 'text' : 'password';
+                    password.type = type;
+                    
+                    if (eyeIcon) {
+                        eyeIcon.classList.toggle('bi-eye');
+                        eyeIcon.classList.toggle('bi-eye-slash');
+                    }
+                });
+            }
         });
     </script>
 </body>
